@@ -1,0 +1,13 @@
+"use client";
+import { useEffect, useState } from "react";
+type Factor = { id: string; status: string };
+export default function MfaForm() {
+  const [factors, setFactors] = useState<Factor[]>([]), [enrollment, setEnrollment] = useState<{ id: string; totp?: { qr_code?: string; secret?: string } } | null>(null), [code, setCode] = useState(""), [message, setMessage] = useState("");
+  const load = () => fetch("/api/admin/mfa").then((r) => r.json()).then((d) => setFactors(d.factors ?? []));
+  useEffect(() => { void load(); }, []);
+  async function enroll() { setMessage(""); const response = await fetch("/api/admin/mfa", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "enroll" }) }); const data = await response.json(); if (!response.ok) setMessage(data.msg ?? data.error ?? "Não foi possível iniciar."); else setEnrollment(data); }
+  async function verify() { if (!enrollment) return; const response = await fetch("/api/admin/mfa", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "verify", factorId: enrollment.id, code }) }); const data = await response.json(); if (!response.ok) return setMessage(data.msg ?? data.error ?? "Código incorreto."); setMessage("Verificação em duas etapas ativada."); setEnrollment(null); setCode(""); void load(); }
+  async function disable(id: string) { if (!confirm("Desativar a verificação em duas etapas?")) return; const response = await fetch("/api/admin/mfa", { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({ factorId: id }) }); setMessage(response.ok ? "Verificação desativada." : "Entre novamente e tente desativar."); if (response.ok) void load(); }
+  const active = factors.find((factor) => factor.status === "verified");
+  return <section className="admin-box account-form"><h2>Verificação em duas etapas</h2><p>Protege a conta com um código do Google Authenticator, Microsoft Authenticator ou aplicativo semelhante.</p>{active ? <><p className="admin-notice">Proteção ativada nesta conta.</p><button onClick={() => void disable(active.id)}>Desativar proteção</button></> : enrollment ? <div className="mfa-enroll">{enrollment.totp?.qr_code && <img src={enrollment.totp.qr_code} alt="QR Code para configurar o autenticador" />}<p>Escaneie o QR Code. Se precisar, use a chave: <strong>{enrollment.totp?.secret}</strong></p><input value={code} onChange={(event) => setCode(event.target.value)} inputMode="numeric" maxLength={6} placeholder="Código de 6 números" /><button onClick={() => void verify()}>Confirmar e ativar</button></div> : <button onClick={() => void enroll()}>Configurar autenticador</button>}{message && <p className="admin-notice">{message}</p>}</section>;
+}

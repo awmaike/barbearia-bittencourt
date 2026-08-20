@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1787072841111,
+      "tag": "0000_wild_master_mold",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787084091878,
+      "tag": "0001_fair_rick_jones",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787086078417,
+      "tag": "0002_fluffy_blockbuster",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1787088322824,
+      "tag": "0003_third_silvermane",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1787141376457,
+      "tag": "0004_puzzling_juggernaut",
+      "breakpoints": true
+    }
+  ]
+}
