@@ -1,0 +1,8 @@
+.nav > .button.button-small {
+  background: #e53935;
+  color: #ffffff;
+}
+
+.nav > .button.button-small:hover {
+  background: #c62828;
+}
